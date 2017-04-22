@@ -1,0 +1,19 @@
+# Description: Add Unity static quicklist support to inkscape
+# Forwarded: https://bugs.launchpad.net/inkscape/+bug/676886
+# Bug-Ubuntu: https://bugs.launchpad.net/bugs/676886
+# Author: Didier Roche <didrocks@ubuntu.com>
+
+Index: fix-966221/inkscape.desktop.in
+===================================================================
+--- fix-966221.orig/inkscape.desktop.in	2012-03-27 21:18:48.097841449 +0100
++++ fix-966221/inkscape.desktop.in	2012-03-27 21:19:37.049839772 +0100
+@@ -12,3 +12,9 @@
+ Terminal=false
+ StartupNotify=true
+ Icon=inkscape
++X-Ayatana-Desktop-Shortcuts=Drawing
++
++[Drawing Shortcut Group]
++_Name=New Drawing
++Exec=inkscape
++TargetEnvironment=Unity

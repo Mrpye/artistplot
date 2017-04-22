@@ -1,0 +1,206 @@
+From: "Matteo F. Vescovi" <mfv.debian@gmail.com>
+Date: Fri, 21 Jun 2013 15:05:53 +0200
+Subject: Fix_FTBFS_on_gcc-4.8
+
+---
+ src/connector-context.cpp    | 22 +++++++++++-----------
+ src/extension/effect.cpp     |  2 +-
+ src/gradient-drag.cpp        |  2 +-
+ src/libavoid/vpsc.cpp        |  2 +-
+ src/libcola/straightener.cpp |  6 +++---
+ src/libcroco/cr-parser.c     |  2 +-
+ src/libvpsc/block.cpp        |  2 +-
+ src/widgets/desktop-widget.h |  2 +-
+ src/widgets/toolbox.cpp      |  4 ++--
+ 9 files changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/src/connector-context.cpp b/src/connector-context.cpp
+index f7d18a3..f0dea9a 100644
+--- a/src/connector-context.cpp
++++ b/src/connector-context.cpp
+@@ -1287,15 +1287,15 @@ cc_connector_rerouting_finish(SPConnectorContext *const cc, Geom::Point *const p
+         if (found) {
+             if (cc->clickedhandle == cc->endpt_handle[0]) {
+                 sp_object_setAttribute(cc->clickeditem,
+-                        "inkscape:connection-start", shape_label, false);
++                        "inkscape:connection-start", shape_label, NULL);
+                 sp_object_setAttribute(cc->clickeditem,
+-                        "inkscape:connection-start-point", cpid, false);
++                        "inkscape:connection-start-point", cpid, NULL);
+             }
+             else {
+                 sp_object_setAttribute(cc->clickeditem,
+-                        "inkscape:connection-end", shape_label, false);
++                        "inkscape:connection-end", shape_label, NULL);
+                 sp_object_setAttribute(cc->clickeditem,
+-                        "inkscape:connection-end-point", cpid, false);
++                        "inkscape:connection-end-point", cpid, NULL);
+             }
+             g_free(shape_label);
+         }
+@@ -1435,26 +1435,26 @@ spcc_flush_white(SPConnectorContext *cc, SPCurve *gc)
+ 
+         bool connection = false;
+         sp_object_setAttribute(cc->newconn, "inkscape:connector-type",
+-                cc->isOrthogonal ? "orthogonal" : "polyline", false);
++                cc->isOrthogonal ? "orthogonal" : "polyline", NULL);
+         sp_object_setAttribute(cc->newconn, "inkscape:connector-curvature",
+-                Glib::Ascii::dtostr(cc->curvature).c_str(), false);
++                Glib::Ascii::dtostr(cc->curvature).c_str(), NULL);
+         if (cc->shref)
+         {
+             sp_object_setAttribute(cc->newconn, "inkscape:connection-start",
+-                    cc->shref, false);
++                    cc->shref, NULL);
+             if (cc->scpid)
+                 sp_object_setAttribute(cc->newconn, "inkscape:connection-start-point",
+-                        cc->scpid, false);
++                        cc->scpid, NULL);
+             connection = true;
+         }
+ 
+         if (cc->ehref)
+         {
+             sp_object_setAttribute(cc->newconn, "inkscape:connection-end",
+-                    cc->ehref, false);
++                    cc->ehref, NULL);
+             if (cc->ecpid)
+                 sp_object_setAttribute(cc->newconn, "inkscape:connection-end-point",
+-                        cc->ecpid, false);
++                        cc->ecpid, NULL);
+             connection = true;
+         }
+         // Process pending updates.
+@@ -1937,7 +1937,7 @@ void cc_selection_set_avoid(bool const set_avoid)
+ 
+         if (cc_item_is_shape(item)) {
+             sp_object_setAttribute(item, "inkscape:connector-avoid",
+-                    value, false);
++                    value, NULL);
+             item->avoidRef->handleSettingChange();
+             changes++;
+         }
+diff --git a/src/extension/effect.cpp b/src/extension/effect.cpp
+index 9a22c07..192c72e 100644
+--- a/src/extension/effect.cpp
++++ b/src/extension/effect.cpp
+@@ -323,7 +323,7 @@ Effect::set_last_effect (Effect * in_effect)
+ Inkscape::XML::Node *
+ Effect::find_menu (Inkscape::XML::Node * menustruct, const gchar *name)
+ {
+-    if (menustruct == NULL) return false;
++    if (menustruct == NULL) return NULL;
+     for (Inkscape::XML::Node * child = menustruct;
+             child != NULL;
+             child = child->next()) {
+diff --git a/src/gradient-drag.cpp b/src/gradient-drag.cpp
+index 0459cd1..d620817 100644
+--- a/src/gradient-drag.cpp
++++ b/src/gradient-drag.cpp
+@@ -1969,7 +1969,7 @@ GrDrag::deleteSelected (bool just_one)
+ {
+     if (!selected) return;
+ 
+-    SPDocument *document = false;
++    SPDocument *document = NULL;
+ 
+     struct StructStopInfo {
+         SPStop * spstop;
+diff --git a/src/libavoid/vpsc.cpp b/src/libavoid/vpsc.cpp
+index 19d3603..1646dda 100644
+--- a/src/libavoid/vpsc.cpp
++++ b/src/libavoid/vpsc.cpp
+@@ -422,7 +422,7 @@ Constraint* IncSolver::mostViolated(Constraints &l) {
+     // downwards.  There is always at least 1 element in the
+     // vector because of search.
+     // TODO check this logic and add parens:
+-    if((deletePoint != end) && ((minSlack < ZERO_UPPERBOUND) && !v->active || v->equality)) {
++    if((deletePoint != end) && (((minSlack < ZERO_UPPERBOUND) && !v->active) || v->equality)) {
+         *deletePoint = l[l.size()-1];
+         l.resize(l.size()-1);
+     }
+diff --git a/src/libcola/straightener.cpp b/src/libcola/straightener.cpp
+index e237c03..7c73cb9 100644
+--- a/src/libcola/straightener.cpp
++++ b/src/libcola/straightener.cpp
+@@ -108,7 +108,7 @@ namespace straightener {
+     int compare_events(const void *a, const void *b) {
+         Event *ea=*(Event**)a;
+         Event *eb=*(Event**)b;
+-        if(ea->v!=NULL&&ea->v==eb->v||ea->e!=NULL&&ea->e==eb->e) {
++        if((ea->v!=NULL&&ea->v==eb->v)||(ea->e!=NULL&&ea->e==eb->e)) {
+             // when comparing opening and closing from object
+             // open must come first
+             if(ea->type==Open) return -1;
+@@ -263,8 +263,8 @@ namespace straightener {
+                         // node is on an edge
+                         Edge *edge=(*i)->edge;
+                         if(!edge->isEnd(v->id)
+-                                &&(l!=NULL&&!edge->isEnd(l->id)||l==NULL)
+-                                &&(r!=NULL&&!edge->isEnd(r->id)||r==NULL)) {
++                                &&((l!=NULL&&!edge->isEnd(l->id))||l==NULL)
++                                &&((r!=NULL&&!edge->isEnd(r->id))||r==NULL)) {
+                             if(lastNode!=NULL) {
+                                 //printf("  Rule A: Constraint: v%d +g <= v%d\n",lastNode->id,(*i)->id);
+                                 cs.push_back(createConstraint(lastNode,*i,dim));
+diff --git a/src/libcroco/cr-parser.c b/src/libcroco/cr-parser.c
+index 5b0a56f..a8e2de5 100644
+--- a/src/libcroco/cr-parser.c
++++ b/src/libcroco/cr-parser.c
+@@ -2408,7 +2408,7 @@ cr_parser_parse_stylesheet (CRParser * a_this)
+                                                  import_string,
+                                                  NULL, &location) ;
+ 
+-                                        if ((PRIVATE (a_this)->sac_handler->resolve_import == TRUE)) {
++                                        if (PRIVATE (a_this)->sac_handler->resolve_import == TRUE) {
+                                                 /*
+                                                  *TODO: resolve the
+                                                  *import rule.
+diff --git a/src/libvpsc/block.cpp b/src/libvpsc/block.cpp
+index 221df53..0bd662f 100644
+--- a/src/libvpsc/block.cpp
++++ b/src/libvpsc/block.cpp
+@@ -72,7 +72,7 @@ void Block::setUpConstraintHeap(PairingHeap<Constraint*>* &h,bool in) {
+ 		for (Cit j=cs->begin();j!=cs->end();++j) {
+ 			Constraint *c=*j;
+ 			c->timeStamp=blockTimeCtr;
+-			if (c->left->block != this && in || c->right->block != this && !in) {
++			if ((c->left->block != this && in) || (c->right->block != this && !in)) {
+ 				h->insert(c);
+ 			}
+ 		}
+diff --git a/src/widgets/desktop-widget.h b/src/widgets/desktop-widget.h
+index d853e09..aab73c9 100644
+--- a/src/widgets/desktop-widget.h
++++ b/src/widgets/desktop-widget.h
+@@ -239,7 +239,7 @@ struct SPDesktopWidget {
+ private:
+     GtkWidget *tool_toolbox;
+     GtkWidget *aux_toolbox;
+-    GtkWidget *commands_toolbox,;
++    GtkWidget *commands_toolbox;
+     GtkWidget *snap_toolbox;
+ 
+     static void init(SPDesktopWidget *widget);
+diff --git a/src/widgets/toolbox.cpp b/src/widgets/toolbox.cpp
+index dfa5e08..8c1600d 100644
+--- a/src/widgets/toolbox.cpp
++++ b/src/widgets/toolbox.cpp
+@@ -7932,7 +7932,7 @@ static void sp_connector_orthogonal_toggled( GtkToggleAction* act, GObject *tbl
+ 
+         if (cc_item_is_connector(item)) {
+             sp_object_setAttribute(item, "inkscape:connector-type",
+-                    value, false);
++                    value, NULL);
+             item->avoidRef->handleSettingChange();
+             modmade = true;
+         }
+@@ -7981,7 +7981,7 @@ static void connector_curvature_changed(GtkAdjustment *adj, GObject* tbl)
+ 
+         if (cc_item_is_connector(item)) {
+             sp_object_setAttribute(item, "inkscape:connector-curvature",
+-                    value, false);
++                    value, NULL);
+             item->avoidRef->handleSettingChange();
+             modmade = true;
+         }
