@@ -3,7 +3,8 @@ import pygame.image
 from subprocess import call
 import unicornlib
 import fileinput
-
+import serial
+import threading
 
 print "taking picture"
 
@@ -31,7 +32,7 @@ print "build gcode"
 e = unicornlib.MyEffect()
 e.affect(['--tab="plotter_setup"', '--pen-up-angle=50', '--pen-down-angle=30', '--start-delay=150', '--stop-delay=150', '--xy-feedrate=3500', '--z-feedrate=150', '--z-height=0', '--finished-height=0', '--register-pen=true', '--x-home=0', '--y-home=0', '--num-copies=1', '--continuous=false', '--pause-on-layer-change=false', 'photo.svg'])
 
-file = open("testfile.txt","w") 
+file = open("photo.gcode","w") 
 
 for c in e.context.codes:
 	file.write(c + '\n') 
@@ -39,6 +40,9 @@ for c in e.context.codes:
  
 file.close() 
 
+print "plot "
+#sudo chmod +x gctrl
+call(["/home/andrew/projects/artistplot/application.linux64/gctrl"])
 
 
 
