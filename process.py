@@ -23,9 +23,15 @@ print "convert to svg "
 call(["potrace","--svg","-P 40mmx40mm","-W 40mm","-H40mm","--tight","photo.pbm"])
 
 #code to remove the pt
+print "fix pt "
 f =fileinput.FileInput("photo.svg", inplace=True, backup='.bak')
 for line in f:
-    print(line.replace('pt"', '"'))
+	#print(line.replace('pt"', '"'))
+	if line.startswith("<g transform="):
+		print('<g transform="translate(50.000000,63.385773) scale(0.008858,-0.011925)"')
+	else:    
+		print(line.replace('pt"', '"'))
+	
 f.close()
 
 print "build gcode"
@@ -34,7 +40,8 @@ e.affect(['--tab="plotter_setup"', '--pen-up-angle=50', '--pen-down-angle=30', '
 
 file = open("photo.gcode","w") 
 
-for c in e.context.codes:
+ 
+for c in reversed(e.context.codes):
 	file.write(c + '\n') 
 
  
