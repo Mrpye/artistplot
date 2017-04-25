@@ -1,4 +1,4 @@
-
+ //<>//
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import processing.serial.*;
@@ -44,7 +44,10 @@ void keyPressed()
 {
 
   
-  if (key == 'x') streaming = false;
+  if (key == 'x'){
+    streaming = false;
+    exit();
+  }
 }
 
 void run(String selection) {
@@ -65,6 +68,7 @@ void stream()
   while (true) {
     if (i == gcode.length) {
       streaming = false;
+      exit();
       return;
     }
     
@@ -85,6 +89,6 @@ void serialEvent(Serial p)
   
   if (s.trim().startsWith("ok")) stream();
   if (s.trim().startsWith("error")) stream(); // XXX: really?
-  if (s.trim().startsWith("Y range is from")) run("/home/andrew/projects/artistplot/photo.gcode"); // XXX: really?
+  if (s.trim().startsWith("Y range is from")) run("/home/pi/projects/artistplot/photo.gcode"); // XXX: really?
    
 }

@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class gcodesend extends PApplet {
 
-
+ //<>//
 
 
 
@@ -64,7 +64,10 @@ public void keyPressed()
 {
 
   
-  if (key == 'x') streaming = false;
+  if (key == 'x'){
+    streaming = false;
+    exit();
+  }
 }
 
 public void run(String selection) {
@@ -85,6 +88,7 @@ public void stream()
   while (true) {
     if (i == gcode.length) {
       streaming = false;
+      exit();
       return;
     }
     
@@ -105,7 +109,7 @@ public void serialEvent(Serial p)
   
   if (s.trim().startsWith("ok")) stream();
   if (s.trim().startsWith("error")) stream(); // XXX: really?
-  if (s.trim().startsWith("Y range is from")) run("/home/andrew/projects/artistplot/photo.gcode"); // XXX: really?
+  if (s.trim().startsWith("Y range is from")) run("/home/pi/projects/artistplot/photo.gcode"); // XXX: really?
    
 }
   public void settings() {  size(500, 250); }
