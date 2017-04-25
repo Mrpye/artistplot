@@ -8,13 +8,13 @@ import fileinput
 
 print "taking picture"
 
-pygame.camera.init()
-cam = pygame.camera.Camera(pygame.camera.list_cameras()[0])
-cam.start()
+#pygame.camera.init()
+#cam = pygame.camera.Camera(pygame.camera.list_cameras()[0])
+#cam.start()
 
-img = cam.get_image()
-pygame.image.save(img, "photo.bmp")
-pygame.camera.quit()
+#img = cam.get_image()
+#pygame.image.save(img, "photo.bmp")
+#pygame.camera.quit()
 
 print "Converting "
 call(["mkbitmap", "photo.bmp"])
@@ -47,7 +47,7 @@ file.close()
 
 print "plot "
 #sudo chmod +x gctrl
-call(["/home/andrew/projects/artistplot/application.linux64/gcodesend"])
+call(["sudo","/home/pi/projects/artistplot/application.linux-armv6hf/gcodesend"])
 
 
 
